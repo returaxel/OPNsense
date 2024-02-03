@@ -1,6 +1,6 @@
 **Additional information and inspiration:**
-[schnerring.net](https://schnerring.net/blog/opnsense-baseline-guide-with-vpn-guest-and-vlan-support/)
-[OPNsense Docs](https://docs.opnsense.org/manual/how-tos/wireguard-selective-routing.html)
+- [schnerring.net](https://schnerring.net/blog/opnsense-baseline-guide-with-vpn-guest-and-vlan-support/)
+- [OPNsense Docs](https://docs.opnsense.org/manual/how-tos/wireguard-selective-routing.html)
 
 ## About
 _Disclaimer: Not a networking guru. Do your homework before copy pasting!_
