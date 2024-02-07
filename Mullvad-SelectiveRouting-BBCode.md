@@ -4,11 +4,10 @@
 
 [size=12pt]About[/size]
 
-I spent too long getting this to work with the out of date & overly explanatory information I found online, so here's a very "streamlined" setup of Selective Routing with WireGuard and Mullvad. This is just the steps needed to get it up and running. Don't expect to learn why it's working here. 
+This is basically the existing guide(s) without much explanation, straight to the point, for us who get cross eyed by walls of text. Don't expect to learn why it's working here.
 
-[glow=red,2,300]Not the best, most secure nor is it perfect in any way. [/glow]
-
-[i]Please educate me where there are misstakes![/i]
+[glow=green,2,300]This is the minimum needed to get it up and running on an unconfigured OPNsense host. [/glow]
+[i]Tested with 24.1.1[/i]
 
 Hopefully, it can be of help to someone and lets hope I never have to do BBcode formatting ever again 🤦
 
@@ -64,13 +63,12 @@ Fields not mentioned = BLANK / Default
 | Pub Key         | The one you generated        |
 | Priv Key        | In downloaded .config        |
 | Port            | 51820                        |
-| Tunnel Address  | AddressInConf/32             |
-| Disable Routes  | CHECKED                      |
+| Tunnel Address  | AddressInConf/32            |
+| Disable Routes  | CHECKED                |
 | Gateway         | Tunnel_Address (-1)*          |
 [/code]
 
 * See note: [url=https://docs.opnsense.org/manual/how-tos/wireguard-selective-routing.html#step-2-configure-the-wireguard-instance]OPnsense Docs - wireguard-selective-routing[/url]
- 
 
 - Save (don't apply yet)
 
@@ -138,7 +136,7 @@ Fields not mentioned = BLANK / Default
 
 [hr]
 
-[size=14pt][b]Firewall Rules[/b][/size]
+[size=14pt][b]Firewall configuration[/b][/size]
 [i]This configuration is as barebones as they come, modify it to your liking[/i]
 
 [code]Navigate to: Firewall > Aliases[/code]
@@ -149,14 +147,13 @@ Fields not mentioned = BLANK / Default
 | ----------------- | ---------------------------------------------- |
 | Name              | [selected hosts] - any name you want           |
 | Type              | Host(s)                                        |
-| Content           | Add the IP of each device you want to use WireGuard|
+| Content           | Add the IP of each device you want to use WireGuard
 [/code]
 
 - SAVE
 - APPLY
 
-[size=12pt][b]FIRST rule: Route DNS traffic for [selected hosts][/b][/size]
-[i]This rule is basically optional, I use it for troubleshooting[/i]
+[size=12pt][b]FIRST rule: Route [selected hosts] traffic through the tunnel[/b][/size]
 
 [code]Navigate to: Firewall > Rules > Floating[/code]
 
@@ -166,29 +163,7 @@ Fields not mentioned = BLANK / Default
 | -------------------- | ------------------------------ |
 | Action               | Pass                           |
 | Quick                | CHECKED                        |
-| Interface            | Interfaces for selected devices|
-| Direction            | In                             |
-| TCP/IP Version       | IPv4                           |
-| Protocol             | TCP/UDP                        |
-| Source               | [selected hosts]               |
-| Destination          | A Mullvad DNS server: 100.64.0.X|
-| Dst Port Range       | DNS                            |
-| Gateway              | WG Gateway                     |
-|              Show Advanced Features                   |
-| MATCH Local tag      | NO_WAN_EGRESS                  |
-[/code]
-
-- SAVE
-
-[size=12pt][b]SECOND rule: Route [selected hosts] traffic through the tunnel[/b][/size]
-
-- ADD
-[code]
-| Field                | Value                          |
-| -------------------- | ------------------------------ |
-| Action               | Pass                           |
-| Quick                | CHECKED                        |
-| Interface            | Interfaces for selected devices|
+| Interface            | Interface(s) where your [selected hosts] live
 | Direction            | In                             |
 | TCP/IP Version       | IPv4                           |
 | Protocol             | Any                            |
@@ -201,10 +176,31 @@ Fields not mentioned = BLANK / Default
 
 - SAVE
 
-[size=12pt][b]THIRD rule: Kill switch[/b][/size]
-[i]May not be needed depending on your configuration and FW ruleset[/i]
+[size=12pt][b]SECOND rule: Kill switch[/b][/size]
+[i]May not be needed depending on your configuration, better safe than sorry?[/i]
 
 - [url=https://docs.opnsense.org/manual/how-tos/wireguard-selective-routing.html#step-11-add-a-kill-switch-optional]OPNsense Docs: Kill Switch[/url]
+
+[size=12pt][b]THIRD rule: Route DNS traffic for [selected hosts][/b][/size]
+[i]This rule is optional,use for troubleshooting or with port forwards.[/i]
+
+- ADD
+[code]
+| Field                | Value                          |
+| -------------------- | ------------------------------ |
+| Action               | Pass                           |
+| Quick                | CHECKED                        |
+| Interface            | Interface(s) where your [selected hosts] live
+| Direction            | In                             |
+| TCP/IP Version       | IPv4                           |
+| Protocol             | TCP/UDP                        |
+| Source               | [selected hosts]               |
+| Destination          | A Mullvad DNS server: 100.64.0.X
+| Dst Port Range       | DNS                            |
+| Gateway              | WG Gateway                     |
+[/code]
+
+- SAVE
 
 [size=12pt][b]NAT Rule: NAT WireGuard for [selected hosts][/b][/size]
 
@@ -224,7 +220,6 @@ Fields not mentioned = BLANK / Default
 | Destination              | Any                                            |
 | Dst Port                 | Any                                            |
 | Translation / Target     | Interface Address                              |
-| SET local tag            | NO_WAN_EGRESS                                  |
 [/code]
 
 - SAVE
@@ -242,3 +237,6 @@ Fields not mentioned = BLANK / Default
 [code]
 (curl https://am.i.mullvad.net/json).Content | ConvertFrom-Json
 [/code]
+
+[glow=cyan,2,300]Thanks for reading![/glow]
+[i]Please educate me where there are misstakes![/i]
