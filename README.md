@@ -17,12 +17,14 @@ Then add the following
 * a new NAT rule:
 *     WGinterface, any, *, selectiveDst[alias], *, Interface address, *, NO, <description>
 
-Floating
+**Floating**
 <img width="1387" height="34" alt="image" src="https://github.com/user-attachments/assets/93cbe1ba-a4cc-4ee1-b2f6-2fb1b7a186a5" />
 
-NAT
+**NAT**
 <img width="1352" height="37" alt="image" src="https://github.com/user-attachments/assets/b18718ba-2d20-4e2f-924c-b4e6477f5cf2" />
 
-Verify
-Add "am.i.mullvad.net" to the new alias.
-Browse to https://mullvad.net/en/check - should be 2/3 green (DNS will leak unless you only use mullvad DNS tunneled, not really an issue though depending on your setup.)
+### Verify
+* Add "am.i.mullvad.net" to the new alias.
+* Browse to https://mullvad.net/en/check (2/3 green)
+
+`DNS will leak unless you only use mullvad DNS tunneled. Not really an issue though depending on your setup.`
